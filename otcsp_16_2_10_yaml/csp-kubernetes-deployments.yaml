@@ -1,0 +1,101 @@
+##########################################################
+# Deployments for OpenText CSP
+# Access only available within kubernetes cluster
+# Update the docker image(s) below to the desired image
+##########################################################
+
+
+##########################################################
+# Postgres DB for OpenText Archive Center
+##########################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: otac-db
+spec:
+  selector:
+    matchLabels:
+      app: otac-db 
+  template:
+    metadata:
+      labels:
+        app: otac-db
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: otac-db-configmap
+        - secretRef:
+            name: otac-db-secrets
+        image: gcdocscloudctr.azurecr.io/otcs/postgres:9.6.3
+        name: otac-db
+        resources:
+          limits:
+            cpu: 2
+            memory: 4Gi
+          requests:
+            cpu: 0.5
+            memory: 500m
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: otac-db-data
+      volumes:
+      - name: otac-db-data
+        persistentVolumeClaim:
+          claimName: otac-db-pvc
+---
+
+##########################################################
+# Postgres DB for OpenText Content Server
+##########################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: otcs-db
+spec:
+  selector:
+    matchLabels:
+      app: otcs-db
+  template:
+    metadata:
+      labels:
+        app: otcs-db
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: otcs-db-configmap
+        - secretRef:
+            name: otcs-db-secrets
+        image: gcdocscloudctr.azurecr.io/otcs/postgres:11.4
+        name: otcs-db
+        readinessProbe:
+            exec:
+              command: ["/usr/bin/pg_isready", "-h", "localhost", "-q"]
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+        livenessProbe:
+            exec:
+              command: ["/usr/bin/pg_isready", "-h", "localhost", "-q"]
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+        resources:
+          limits:
+            cpu: 2
+            memory: 4Gi
+          requests:
+            cpu: 0.5
+            memory: 500m
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: otcs-db-data
+      volumes:
+      - name: otcs-db-data
+        persistentVolumeClaim:
+          claimName: otcs-db-pvc
+---
