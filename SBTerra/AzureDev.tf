@@ -1,3 +1,0 @@
-module "AzureDev" {
-  source = "./Cluster"
-}
