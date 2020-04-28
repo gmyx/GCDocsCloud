@@ -4,7 +4,7 @@ locals {
   location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
   cluster_vars = read_terragrunt_config(find_in_parent_folders("cluster.hcl"))
   vmdata_vars = read_terragrunt_config("vmdata.hcl")
-  admin_secret_vars = read_terragrunt_config("vmdata.hcl")
+  admin_secret_vars = read_terragrunt_config("admin_secret.hcl")
 
   # Extract out common variables for reuse
   environment = local.environment_vars.locals.environment
