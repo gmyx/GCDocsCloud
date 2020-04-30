@@ -11,7 +11,6 @@ terraform {
   }
 }
 
-
 resource "azurerm_key_vault_secret" "VM-Secret" {
   name         = "VM1-Secret"
   value        = var.admin_secret
@@ -23,7 +22,7 @@ resource "azurerm_key_vault_secret" "VM-Secret" {
 }
 
 module "WinVM" {
-  source = "./terraform-azurerm-basicwindowsvm-v2-master"
+  source = "./terraform-azurerm-basicwindowsvm-v2"
 
   name = "${var.cluster_name}-${var.role}"
   resource_group_name = var.resource_group_name
@@ -34,6 +33,8 @@ module "WinVM" {
   nic_resource_group_name = var.resource_group_name
   vm_size = var.size
   location = var.location
+  load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids
+  data_disk_sizes_gb = [80,40,20]
 
   security_rules = [
     {

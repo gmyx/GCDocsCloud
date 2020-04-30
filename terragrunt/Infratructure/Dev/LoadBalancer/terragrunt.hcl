@@ -27,8 +27,13 @@ dependency "ResourceGroup" {
   config_path = "../ResourceGroup"
 }
 
+dependency "Network" {
+  config_path = "../Network"
+}
+
 inputs = {
   location = local.location
   resource_group_name = dependency.ResourceGroup.outputs.resource_group_name
   environment = local.environment
+  subnet_id = dependency.Network.outputs.subnet_id
 }

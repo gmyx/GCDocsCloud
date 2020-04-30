@@ -47,3 +47,8 @@ variable "subnet_name" {
   type        = string
   description = "The name of the subnet that this Vm will be a part of"
 }
+
+variable "load_balancer_backend_address_pools_ids" {
+  description = "List of Load Balancer Backend Address Pool IDs references to which this VM belongs"
+  default     = [[], [], [], [], [], [], [], [], [], [], [], []]
+}

@@ -12,3 +12,8 @@ variable "environment" {
   type        = string
   description = "A short representation of the envrioment. Max 5 char. Ex: Dev, Qa, PProd, Prod"
 }
+
+variable "subnet_id" {
+  type        = string
+  description = "The Id of the subnet that the private IP of the LB will be in."
+}

@@ -46,6 +46,11 @@ dependency "Network" {
   config_path = "../../../Network"
 }
 
+dependency "LoadBalancer" {
+  config_path = "../../../LoadBalancer"
+}
+
+
 inputs = {
   location = local.location  
   cluster_name = local.cluster_name
@@ -57,4 +62,5 @@ inputs = {
   size = local.size
   vnet_name = dependency.Network.outputs.vnet_name
   subnet_name = dependency.Network.outputs.subnet_name
+  load_balancer_backend_address_pools_ids = [dependency.LoadBalancer.outputs.Backend_Address_Pool_ID]
 }
