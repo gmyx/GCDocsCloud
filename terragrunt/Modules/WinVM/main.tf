@@ -21,10 +21,12 @@ resource "azurerm_key_vault_secret" "VM-Secret" {
   }
 }
 
-resource "azurerm_network_interface_nat_rule_association" "example" {
+resource "azurerm_network_interface_nat_rule_association" "NatRule" {
   network_interface_id  = module.WinVM.Nic0.id
   ip_configuration_name = module.WinVM.Nic0.ip_configuration[0].name
   nat_rule_id           = var.lb_nat_rule_id
+
+  depends_on = [module.WinVM]
 }
 
 module "WinVM" {
@@ -42,6 +44,7 @@ module "WinVM" {
   load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids
   data_disk_sizes_gb = [80,40,20]
   //custom_data = filebase64("serverConfig/serverConfig.ps1")
+  #vm_depends_on = azurerm_network_interface_nat_rule_association.NatRule
 
   security_rules = [
     {

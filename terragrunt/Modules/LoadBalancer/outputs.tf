@@ -9,3 +9,7 @@ output "LoadBalancer_ID" {
 output "Backend_Address_Pool_ID" {
   value = azurerm_lb_backend_address_pool.BAP.id
 }
+
+output "NAT_RDP_ID" {
+  value = azurerm_lb_nat_rule.RDP.id
+}

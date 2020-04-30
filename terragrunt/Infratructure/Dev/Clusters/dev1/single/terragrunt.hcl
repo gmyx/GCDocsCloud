@@ -63,4 +63,5 @@ inputs = {
   vnet_name = dependency.Network.outputs.vnet_name
   subnet_name = dependency.Network.outputs.subnet_name
   load_balancer_backend_address_pools_ids = [dependency.LoadBalancer.outputs.Backend_Address_Pool_ID]
+  lb_nat_rule_id = dependency.LoadBalancer.outputs.NAT_RDP_ID
 }

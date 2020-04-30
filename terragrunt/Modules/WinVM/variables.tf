@@ -55,6 +55,6 @@ variable "load_balancer_backend_address_pools_ids" {
 }
 
 variable "lb_nat_rule_id" {
-  description "The ID of the load balancer nat rule to attach to"
-  default = null
+  description = "The ID of the load balancer nat rule to attach to"
+  default     = null
 }

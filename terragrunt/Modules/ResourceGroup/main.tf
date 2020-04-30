@@ -16,4 +16,8 @@ terraform {
 resource "azurerm_resource_group" "GCDOCS" {
   name     = "GCDOCS-${var.environment}-rg"
   location = var.location
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
