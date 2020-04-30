@@ -49,6 +49,12 @@ variable "subnet_name" {
 }
 
 variable "load_balancer_backend_address_pools_ids" {
+  type        = list
   description = "List of Load Balancer Backend Address Pool IDs references to which this VM belongs"
   default     = [[], [], [], [], [], [], [], [], [], [], [], []]
+}
+
+variable "lb_nat_rule_id" {
+  description "The ID of the load balancer nat rule to attach to"
+  default = null
 }

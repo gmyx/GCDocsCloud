@@ -21,6 +21,12 @@ resource "azurerm_key_vault_secret" "VM-Secret" {
   }
 }
 
+resource "azurerm_network_interface_nat_rule_association" "example" {
+  network_interface_id  = module.WinVM.Nic0.id
+  ip_configuration_name = module.WinVM.Nic0.ip_configuration[0].name
+  nat_rule_id           = var.lb_nat_rule_id
+}
+
 module "WinVM" {
   source = "./terraform-azurerm-basicwindowsvm-v2"
 
@@ -35,6 +41,7 @@ module "WinVM" {
   location = var.location
   load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids
   data_disk_sizes_gb = [80,40,20]
+  //custom_data = filebase64("serverConfig/serverConfig.ps1")
 
   security_rules = [
     {
@@ -62,6 +69,18 @@ module "WinVM" {
       destination_address_prefix = "*"
     },
     {
+      name                       = "RDPIn"
+      description                = "Allow RDP in"
+      access                     = "Allow"
+      priority                   = "199"
+      protocol                   = "*"
+      direction                  = "Inbound"
+      source_port_ranges         = "*"
+      source_address_prefix      = "*"
+      destination_port_ranges    = "3389"
+      destination_address_prefix = "*"
+    },
+    {
       name                       = "HTTPOut"
       description                = "Allow HTTP out"
       access                     = "Allow"
@@ -83,6 +102,18 @@ module "WinVM" {
       source_port_ranges         = "*"
       source_address_prefix      = "*"
       destination_port_ranges    = "443"
+      destination_address_prefix = "*"
+    },
+    {
+      name                       = "RDPOut"
+      description                = "Allow RDP Out"
+      access                     = "Allow"
+      priority                   = "299"
+      protocol                   = "*"
+      direction                  = "Outbound"
+      source_port_ranges         = "*"
+      source_address_prefix      = "*"
+      destination_port_ranges    = "3389"
       destination_address_prefix = "*"
     }
   ]

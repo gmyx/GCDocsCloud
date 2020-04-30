@@ -52,8 +52,9 @@ variable "nic_ip_configuration" {
 }
 
 variable "load_balancer_backend_address_pools_ids" {
+  #type        = list
   description = "List of Load Balancer Backend Address Pool IDs references to which this NIC belongs"
-  default     = [[], [], [], [], [], [], [], [], [], [], [], []]
+  default     = null
 }
 
 variable "security_rules" {

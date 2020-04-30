@@ -162,3 +162,12 @@ resource azurerm_virtual_machine_data_disk_attachment attached_data_disk {
   lun                 = count.index + 1 
   caching             = "ReadWrite"
 }
+
+#associate LB with primary nic
+resource azurerm_network_interface_backend_address_pool_association PoolAssociation {
+  count = length(var.load_balancer_backend_address_pools_ids)
+
+  network_interface_id    = azurerm_network_interface.NIC.id
+  ip_configuration_name   = azurerm_network_interface.NIC.ip_configuration[0].name
+  backend_address_pool_id = var.load_balancer_backend_address_pools_ids[count.index]
+}
