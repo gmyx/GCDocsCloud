@@ -1,4 +1,12 @@
-#will be moved later, this is for testing
+#init the data disks
+#adapted from https://devblogs.microsoft.com/scripting/use-powershell-to-initialize-raw-disks-and-to-partition-and-format-volumes/
+$Disks = Get-Disk | Where partitionstyle -eq ‘raw’
+
+ForEach ($SingleDisk in $Disks) {
+    Initialize-Disk -Number $SingleDisk.Number -PartitionStyle MBR
+    $Part = New-Partition -DiskNumber $SingleDisk.Number -AssignDriveLetter -UseMaximumSize
+    Format-Volume -Partition $Part -FileSystem NTFS -Confirm:$False
+}
 
 #install iis
 Configuration WebServerConfiguration
@@ -22,12 +30,5 @@ Configuration WebServerConfiguration
 WebServerConfiguration -OutputPath "C:\DscConfiguration"
 
 Start-DscConfiguration -Wait -Verbose -Path "C:\DscConfiguration"
-
-#init the data disks
-#adapted from https://devblogs.microsoft.com/scripting/use-powershell-to-initialize-raw-disks-and-to-partition-and-format-volumes/
-<#Get-Disk | Where partitionstyle -eq ‘raw’ | `
-  Initialize-Disk -PartitionStyle MBR -PassThru | `
-  New-Partition -AssignDriveLetter -UseMaximumSize | `
-  Format-Volume -FileSystem NTFS -Confirm:$false#>
 
 exit 0 #required by azurerm to avoid fails - should probably use last error code

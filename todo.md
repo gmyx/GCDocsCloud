@@ -14,3 +14,5 @@ move state files to remote
 interagrate file with AzureDevOp and pipelines
 
 change size of OS disk. don't need 128gb on them.
+
+integrate PBMM requirements
