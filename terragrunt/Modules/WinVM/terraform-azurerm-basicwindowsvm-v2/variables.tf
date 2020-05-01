@@ -21,6 +21,11 @@ variable "data_disk_sizes_gb" {
   default     = []
 }
 
+variable "data_disk_create_option" {
+  description = "The type of data disk to create"
+  default     = "Empty"
+}
+
 variable "nic_subnetName" {
   description = "Name of the subnet to which the VM NIC will connect to"
 }
@@ -52,7 +57,7 @@ variable "nic_ip_configuration" {
 }
 
 variable "load_balancer_backend_address_pools_ids" {
-  #type        = list
+  type        = list
   description = "List of Load Balancer Backend Address Pool IDs references to which this NIC belongs"
   default     = null
 }

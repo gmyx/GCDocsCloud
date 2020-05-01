@@ -151,7 +151,7 @@ resource azurerm_managed_disk DataDisk {
   resource_group_name   = var.resource_group_name
   storage_account_type  = var.data_managed_disk_type
   disk_size_gb          = var.data_disk_sizes_gb[count.index]
-  create_option         = "Empty"
+  create_option         = var.data_disk_create_option
 }
 
 resource azurerm_virtual_machine_data_disk_attachment attached_data_disk {

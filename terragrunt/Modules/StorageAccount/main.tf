@@ -1,9 +1,9 @@
 resource "azurerm_storage_account" "example" {
-  name                     = "StorageAccount-${var.environment}"
-  resource_group_name      = azurerm_resource_group.example.name
-  location                 = azurerm_resource_group.example.location
+  name                     = "gcdocsstorageaccount${var.environment}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
   account_tier             = "Standard"
-  account_replication_type = "GRS"
+  account_replication_type = "LRS"
 
   tags = {
     environment = "staging"
