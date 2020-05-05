@@ -28,11 +28,11 @@ resource "null_resource" "compileMOF" {
 }
 
 #compile it
-/*resource "azurerm_automation_dsc_nodeconfiguration" "GCDOCSDSCNode" {
+resource "azurerm_automation_dsc_nodeconfiguration" "GCDOCSDSCNode" {
   name                    = "GCDOCSDsc.localhost"
   resource_group_name     = var.resource_group_name
   automation_account_name = var.automation_account_name
   depends_on              = [azurerm_automation_dsc_configuration.GCDOCS-DSC, null_resource.compileMOF]
 
   content_embedded        = file("Source/GCDOCSDsc/localhost.mof")
-}*/
+}

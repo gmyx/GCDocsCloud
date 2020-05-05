@@ -1,8 +1,8 @@
-!!Goals
+# Goals
 Use scale set to get 2 FEs (prevents use of single NAT?, jump server helps here)
 Fixed Admin + Fixed Agent
 
-!!Issues
+# Issues
 | Issue        | Updates           | Status  |
 |--------------|-------------------|---------|
 | data disk not yet init | DSC can do it, have script else | Prototyped |
