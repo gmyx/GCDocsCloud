@@ -8,6 +8,7 @@ variable "resource_group_name" {
   description = "The name of the resoruce group using in current enviroment"
 }
 
-variable "app_object_id" {
-  description = "The objectID of the application, not the client id"
+variable "automation_account_name" {
+  type        = string
+  description = "The name of the automation account which will host the DSC"
 }

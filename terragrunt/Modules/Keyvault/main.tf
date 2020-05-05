@@ -26,8 +26,26 @@ resource "azurerm_key_vault" "KeyVault" {
   sku_name = "standard"
 
   access_policy {
+    #application permissions, it need to get and set secrets
     tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = data.azurerm_client_config.current.object_id
+
+    key_permissions = [
+      "get"
+    ]
+
+    secret_permissions = [
+      "get","set","delete","purge"
+    ]
+
+    storage_permissions = [
+      "get"
+    ]
+  }
+  access_policy {
+    #user permissions - it need to see, list
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = var.app_object_id
 
     key_permissions = [
       "get","list"

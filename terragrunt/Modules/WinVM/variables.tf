@@ -58,3 +58,22 @@ variable "lb_nat_rule_id" {
   description = "The ID of the load balancer nat rule to attach to"
   default     = null
 }
+
+#dsv vars
+variable "dsc_mode" {
+  default     = "ApplyAndAutoCorrect"  
+  description = "The mode of the DSC monitoring"
+}
+
+variable "dsc_account_name" {
+  default = ""
+  description = "Azure Automation azurerm_automation_account name"
+}
+variable "dsc_server_endpoint" {
+  default = ""
+  description = "Azure Automation azurerm_automation_account endpoint URL"
+}
+variable "dsc_access_key" {
+  default = ""
+ description = "Azure Automation azurerm_automation_account access key"
+}

@@ -2,3 +2,4 @@
 /terragrunt/Infratructure/Dev/account_secret.hcl
 /terragrunt/Infratructure/Dev/Clusters/dev1/single/admin_secret.hcl
 /terragrunt/Infratructure/Dev/Clusters/dev1/single/.terragrunt-cache
+/terragrunt/Modules/DSC/Source/GCDOCSDsc

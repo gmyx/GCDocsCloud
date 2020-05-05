@@ -44,7 +44,7 @@ module "WinVM" {
   load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids
   data_disk_sizes_gb = [80,40,20]
 
-  custom_data = filebase64("serverConfig/serverConfig.ps1")
+  //custom_data = filebase64("serverConfig/serverConfig.ps1")
   #vm_depends_on = azurerm_network_interface_nat_rule_association.NatRule
 
   security_rules = [

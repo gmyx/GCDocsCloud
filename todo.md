@@ -1,18 +1,16 @@
-use scale set to get 2 FEs (prevents use of single NAT, jump server helps here)
+!!Goals
+Use scale set to get 2 FEs (prevents use of single NAT?, jump server helps here)
 Fixed Admin + Fixed Agent
 
-data disk not yet init (need to be init)
-
-create a DSC pull server for env type (e.g. dev, pprod, prod) - very low resources needed
-
-temp: RDP in to single
-
-create storage account to host CS installer and Oracle Installer
-
-move state files to remote
-
-interagrate file with AzureDevOp and pipelines
-
-change size of OS disk. don't need 128gb on them.
-
-integrate PBMM requirements
+!!Issues
+| Issue        | Updates           | Status  |
+|--------------|-------------------|---------|
+| data disk not yet init | DSC can do it, have script else | Prototyped |
+| create a DSC pull server for env type (e.g. dev, pprod, prod) - very low resources needed | No longer needed - Azure Automation account can do it | Replaced |
+| temp: RDP in to single | | Done |
+| create storage account to host CS installer and Oracle Installer | | Not Started |
+| move state files to remote | | Not Started |
+| interagrate file with AzureDevOp and pipelines | | Not Started |
+| change size of OS disk. don't need 128gb on them. | | Not Started |
+| integrate PBMM requirements | | Not Started |
+| determine how to import resources | will be needed to move to new tenant | not started
