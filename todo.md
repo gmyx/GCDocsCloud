@@ -14,3 +14,5 @@ Fixed Admin + Fixed Agent
 | change size of OS disk. don't need 128gb on them. | | Not Started |
 | integrate PBMM requirements | | Not Started |
 | determine how to import resources | will be needed to move to new tenant | not started
+| integrate the PSPC tagging guidlines | | Not Started |
+| name the components per PSPC naming guidelines | | Not Started |

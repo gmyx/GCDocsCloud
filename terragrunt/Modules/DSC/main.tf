@@ -15,8 +15,8 @@ resource "azurerm_automation_dsc_configuration" "GCDOCS-DSC" {
 
 resource "null_resource" "compileMOF" {
   triggers = {
-    #mof_contents = filemd5("Source/GCDOCSDsc/localhost.mof")
-    source_contents = filemd5("Source/dsc.ps1")
+    #this should force this resource to run everytime
+    always_run = timestamp()
   }
 
   #provisioner used to compile the DSC so it can be read in the next step
