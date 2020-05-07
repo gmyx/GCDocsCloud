@@ -16,3 +16,4 @@ Fixed Admin + Fixed Agent
 | determine how to import resources | will be needed to move to new tenant | not started
 | integrate the PSPC tagging guidlines | | Not Started |
 | name the components per PSPC naming guidelines | | Not Started |
+| in DSc Module, Find a way to mask the client secret. Write it to file? | | Not Started |
