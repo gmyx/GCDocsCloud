@@ -21,6 +21,7 @@ resource "azurerm_automation_dsc_configuration" "GCDOCS-DSC" {
 #import DSC modules: StorageDSC: Used to init the data drives
 #instructions to get URI: https://mcpmag.com/articles/2018/09/27/upload-powershell-gallery-module-to-azure.aspx
 resource "azurerm_automation_module" "StorageDSC" {
+  #Source: https://github.com/dsccommunity/StorageDsc
   name                    = "StorageDSC"
   resource_group_name     = var.resource_group_name
   automation_account_name = var.automation_account_name

@@ -13,14 +13,14 @@ locals {
   admin_secret = local.admin_secret_vars.locals.admin_secret
   role = local.vmdata_vars.locals.role
   size = local.vmdata_vars.locals.size
-} 
+}
 
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
   #ideally a git server, but for testing, full local
   #source = "git::git@github.com:gruntwork-io/terragrunt-infrastructure-modules-example.git//asg-elb-service?ref=v0.1.0"
-  source = "../../../../../Modules/WinVM"  
+  source = "../../../../../Modules/WinVM"
 
   # Before apply or plan, run "terraform init -no-color".
   before_hook "before_hook_1" {
@@ -58,9 +58,12 @@ dependency "DSC" {
   config_path = "../../../DSC"
 }
 
+dependency "ColdStorage" {
+  config_path = "../../../ColdStorage"
+}
 
 inputs = {
-  location = local.location  
+  location = local.location
   cluster_name = local.cluster_name
   resource_group_name = dependency.ResourceGroup.outputs.resource_group_name
   environment = local.environment
@@ -71,9 +74,9 @@ inputs = {
   vnet_name = dependency.Network.outputs.vnet_name
   subnet_name = dependency.Network.outputs.subnet_name
   load_balancer_backend_address_pools_ids = [dependency.LoadBalancer.outputs.Backend_Address_Pool_ID]
-  lb_nat_rule_id = dependency.LoadBalancer.outputs.NAT_RDP_ID  
+  lb_nat_rule_id = dependency.LoadBalancer.outputs.NAT_RDP_ID
 
-  #dsc inputs
+  #dsc inputs needed by VM
   dsc_account_name = dependency.AutomationAccount.outputs.automation_account_name
   dsc_server_endpoint = dependency.AutomationAccount.outputs.dsc_server_endpoint
   dsc_access_key = dependency.AutomationAccount.outputs.dsc_primary_access_key

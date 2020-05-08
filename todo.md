@@ -17,3 +17,5 @@ Fixed Admin + Fixed Agent
 | integrate the PSPC tagging guidlines | | Not Started |
 | name the components per PSPC naming guidelines | | Not Started |
 | in DSc Module, Find a way to mask the client secret. Write it to file? | | Not Started |
+| in DSC module, add a privitioner to destroyu the compiled MOF | | Not Started |
+| in VM DSC section, add a method to detroy the asssociation (to be verifyed) | | Not Started |
