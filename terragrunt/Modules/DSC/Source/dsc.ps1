@@ -158,28 +158,28 @@ Configuration GCDOCSDsc
     }
     WaitForDisk Disk4
     {
-      DiskId = 4
+      DiskId = 1
       RetryIntervalSec = 60
       RetryCount = 60
     }
     Disk EVolume
     {
       DiskId = 2
-      DriveLetter = 'E'
+      DriveLetter = 'F'
       FSLabel = "App"
       DependsOn = '[WaitForDisk]Disk2'
     }
     Disk FVolume
     {
       DiskId = 3
-      DriveLetter = 'F'
+      DriveLetter = 'G'
       FSLabel = "Logs"
       DependsOn = '[WaitForDisk]Disk3'
     }
     Disk GVolume
     {
       DiskId = 4
-      DriveLetter = 'G'
+      DriveLetter = 'H'
       FSLabel = "EFS"
       DependsOn = '[WaitForDisk]Disk4'
     }

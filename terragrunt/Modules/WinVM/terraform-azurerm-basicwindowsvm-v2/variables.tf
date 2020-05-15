@@ -118,6 +118,10 @@ variable "vm_size" {
   description = "Specifies the size of the Virtual Machine. Eg: Standard_F4"
 }
 
+variable "source_image_id" {
+  description = " The Id of the source image "
+}
+
 variable "storage_image_reference" {
   default = {
     publisher = "MicrosoftWindowsServer"
@@ -138,7 +142,7 @@ variable "os_disk" {
     caching       = "ReadWrite"
     #create_option = "FromImage" #removed
     #os_type       = null #removed
-    disk_size_gb  = null      
+    disk_size_gb  = null
     storage_account_type = "Standard_LRS" #was os_managed_disk_type, a sperate variable
   }
 }
