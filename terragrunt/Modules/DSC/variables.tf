@@ -13,7 +13,7 @@ variable "automation_account_name" {
   description = "The name of the automation account which will host the DSC"
 }
 
-/*variable "subscription_id" {
+variable "subscription_id" {
   description = "The subscription id of the subscription"
 }
 
@@ -27,4 +27,4 @@ variable "client_id" {
 
 variable "client_secret" {
   description = "The client secret used to authenticate the service principle"
-}*/
+}

@@ -213,7 +213,7 @@ Configuration GCDOCSDsc
 
     File TestFile2 {
       DestinationPath = "G:\README.TXT"
-      Contents = "Application log files $CustomString"
+      Contents = "Application Log files ONLY PLEASE!!! $CustomString"
       Type = "File"
       Ensure = "Present"
       DependsOn = '[Disk]FVolume'

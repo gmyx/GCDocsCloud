@@ -5,14 +5,6 @@ locals {
   cluster_vars = read_terragrunt_config(find_in_parent_folders("cluster.hcl"))
   vmdata_vars = read_terragrunt_config("vmdata.hcl")
   admin_secret_vars = read_terragrunt_config("admin_secret.hcl")
-  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl","account.hcl"))
-  account_secret_vars = read_terragrunt_config(find_in_parent_folders("account_secret.hcl","account.hcl"))
-
-  # Extract the variables needed for DSC
-  subscription_id   = local.account_vars.locals.subscription_id
-  client_id         = local.account_vars.locals.client_id
-  client_secret     = local.account_secret_vars.locals.client_secret
-  tenant_id         = local.account_vars.locals.tenant_id
 
   # Extract out common variables for reuse
   environment = local.environment_vars.locals.environment
@@ -86,12 +78,7 @@ inputs = {
   lb_nat_rule_id      = dependency.LoadBalancer.outputs.NAT_RDP_ID
 
   #dsc inputs needed by VM
-  subscription_id     = local.subscription_id
-  client_id           = local.client_id
-  client_secret       = local.client_secret
-  tenant_id           = local.tenant_id
   dsc_name            = dependency.DSC.outputs.dsc_name
-  dsc_account_name    = dependency.AutomationAccount.outputs.automation_account_name
   dsc_server_endpoint = dependency.AutomationAccount.outputs.dsc_server_endpoint
   dsc_access_key      = dependency.AutomationAccount.outputs.dsc_primary_access_key
 }
