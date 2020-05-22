@@ -120,6 +120,7 @@ variable "vm_size" {
 
 variable "source_image_id" {
   description = " The Id of the source image "
+  default = ""
 }
 
 variable "storage_image_reference" {

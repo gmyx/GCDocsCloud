@@ -5,6 +5,14 @@ locals {
   cluster_vars = read_terragrunt_config(find_in_parent_folders("cluster.hcl"))
   vmdata_vars = read_terragrunt_config("vmdata.hcl")
   admin_secret_vars = read_terragrunt_config("admin_secret.hcl")
+  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl","account.hcl"))
+  account_secret_vars = read_terragrunt_config(find_in_parent_folders("account_secret.hcl","account.hcl"))
+
+  # Extract the variables needed for DSC
+  subscription_id   = local.account_vars.locals.subscription_id
+  client_id         = local.account_vars.locals.client_id
+  client_secret     = local.account_secret_vars.locals.client_secret
+  tenant_id         = local.account_vars.locals.tenant_id
 
   # Extract out common variables for reuse
   environment = local.environment_vars.locals.environment
@@ -63,21 +71,27 @@ dependency "ColdStorage" {
 }
 
 inputs = {
-  location = local.location
-  cluster_name = local.cluster_name
+  #variables needed to define the VM
+  location            = local.location
+  cluster_name        = local.cluster_name
   resource_group_name = dependency.ResourceGroup.outputs.resource_group_name
-  environment = local.environment
-  keyvault_id = dependency.Keyvault.outputs.keyvault_id
-  admin_secret = local.admin_secret
-  role = local.role
-  size = local.size
-  vnet_name = dependency.Network.outputs.vnet_name
-  subnet_name = dependency.Network.outputs.subnet_name
+  environment         = local.environment
+  keyvault_id         = dependency.Keyvault.outputs.keyvault_id
+  admin_secret        = local.admin_secret
+  role                = local.role
+  size                = local.size
+  vnet_name           = dependency.Network.outputs.vnet_name
+  subnet_name         = dependency.Network.outputs.subnet_name
   load_balancer_backend_address_pools_ids = [dependency.LoadBalancer.outputs.Backend_Address_Pool_ID]
-  lb_nat_rule_id = dependency.LoadBalancer.outputs.NAT_RDP_ID
+  lb_nat_rule_id      = dependency.LoadBalancer.outputs.NAT_RDP_ID
 
   #dsc inputs needed by VM
-  dsc_account_name = dependency.AutomationAccount.outputs.automation_account_name
+  subscription_id     = local.subscription_id
+  client_id           = local.client_id
+  client_secret       = local.client_secret
+  tenant_id           = local.tenant_id
+  dsc_name            = dependency.DSC.outputs.dsc_name
+  dsc_account_name    = dependency.AutomationAccount.outputs.automation_account_name
   dsc_server_endpoint = dependency.AutomationAccount.outputs.dsc_server_endpoint
-  dsc_access_key = dependency.AutomationAccount.outputs.dsc_primary_access_key
+  dsc_access_key      = dependency.AutomationAccount.outputs.dsc_primary_access_key
 }

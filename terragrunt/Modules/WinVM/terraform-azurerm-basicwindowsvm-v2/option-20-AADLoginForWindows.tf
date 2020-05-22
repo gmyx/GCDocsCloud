@@ -6,7 +6,7 @@ variable "AADLoginForWindows" {
 
 resource "azurerm_virtual_machine_extension" "AADLoginForWindows" {
   count                      = var.AADLoginForWindows == null ? 0 : 1
-  name                       = "AADLoginForWindows"
+  name                       = "${var.name}-AADLoginForWindows"
   virtual_machine_id         = azurerm_windows_virtual_machine.VM.id
   publisher                  = "Microsoft.Azure.ActiveDirectory"
   type                       = "AADLoginForWindows"

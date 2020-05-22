@@ -64,6 +64,20 @@ $virtualNetwork= Get-AzVirtualNetwork -Name $vnetName -ResourceGroupName $resour
 ($virtualNetwork | Select -ExpandProperty subnets | Where-Object  {$_.Name -eq $subnetName} ).privateLinkServiceNetworkPolicies = "Disabled"
 $virtualNetwork | Set-AzVirtualNetwork | Out-Null
 
+###
+#create SIG image definition
+
+az sig image-definition create \
+   -g $imageResourceGroup \
+   --gallery-name $sigName \
+   --gallery-image-definition $imageDefName \
+   --publisher corpIT \
+   --os-state Generalized \
+   --offer myOffer \
+   --sku 18.04-LTS \
+   --os-type Linux
+###
+
 #get templates and modify
 Write-Output "" #intentional blank line
 Write-Output "Part 3 - Get Templates and Modify them"

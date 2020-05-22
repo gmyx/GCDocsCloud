@@ -16,7 +16,7 @@ variable "encryptDisks" {
 resource "azurerm_virtual_machine_extension" "AzureDiskEncryption" {
 
   count                      = var.encryptDisks == null ? 0 : 1
-  name                       = "AzureDiskEncryption"
+  name                       = "${var.name}-AzureDiskEncryption"
   depends_on                 = [azurerm_template_deployment.autoshutdown]
   virtual_machine_id         = azurerm_windows_virtual_machine.VM.id
   publisher                  = "Microsoft.Azure.Security"
@@ -25,7 +25,7 @@ resource "azurerm_virtual_machine_extension" "AzureDiskEncryption" {
   auto_upgrade_minor_version = true
 
   settings = <<SETTINGS
-        {  
+        {
           "EncryptionOperation": "EnableEncryption",
           "KeyVaultResourceId": "${var.encryptDisks.KeyVaultResourceId}",
           "KeyVaultURL": "${var.encryptDisks.KeyVaultURL}",

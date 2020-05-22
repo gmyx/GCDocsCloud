@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # TERRAGRUNT CONFIGURATION
-# 
+#
 # adapted from examples found at https://github.com/gruntwork-io/terragrunt-infrastructure-live-example
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ locals {
 terraform {
   extra_arguments "retry_lock" {
     commands  = ["plan", "apply", "validate", "version", "init"] #get_terraform_commands_that_need_vars()
-    arguments = ["-no-color"]
+    #arguments = ["-no-color"]
   }
 }
 

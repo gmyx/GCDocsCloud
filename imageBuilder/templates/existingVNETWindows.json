@@ -1,0 +1,132 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "imageTemplateName": {
+        "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "svclocation": {
+            "type": "string"
+        }
+    },
+    
+    "variables": {
+    },
+
+
+    "resources": [
+      {
+        "name": "[parameters('imageTemplateName')]",
+        "type": "Microsoft.VirtualMachineImages/imageTemplates",
+        "apiVersion": "[parameters('api-version')]",
+        "location": "[parameters('svclocation')]",
+        "dependsOn": [],
+        "tags": {
+            "imagebuilderTemplate": "AzureVMImageBuilderVNET",
+            "userIdentity": "enabled"
+                },
+            "identity": {
+                "type": "UserAssigned",
+                        "userAssignedIdentities": {
+                        "/subscriptions/98d18bb7-62b4-4fb6-b35b-9416f12eb2cc/resourcegroups/GCDOCS-dev-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aibIdentity1589467223": {}
+                            
+                    }
+                    },
+    "properties": {
+
+        "buildTimeoutInMinutes" : 100,
+        
+        "vmProfile": 
+            {
+            "vmSize": "Standard_D2_v2",
+            "osDiskSizeGB": 127,
+            "vnetConfig": {
+                "name": "GCDOCS-dev-vnet",
+                "subnetName": "GCDOCS-dev-subnet",
+                "resourceGroupName": "GCDOCS-dev-rg"
+                }
+            },
+
+        "source": {
+            "type": "PlatformImage",
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2019-Datacenter",
+                "version": "latest"
+            
+        },
+        "customize": [
+
+
+            {
+                "type": "PowerShell",
+                "name": "CreateBuildPath",
+                "scriptUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/testPsScript.ps1"
+            },
+            {
+                "type": "WindowsRestart",
+                "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\buildArtifacts\\azureImageBuilderRestart.txt",
+                "restartTimeout": "5m"
+            },
+            {
+                "type": "File",
+                "name": "downloadBuildArtifacts",
+                "sourceUri": "https://raw.githubusercontent.com/danielsollondon/azvmimagebuilder/master/quickquickstarts/exampleArtifacts/buildArtifacts/index.html",
+                "destination":"c:\\buildArtifacts\\index.html"
+            },
+
+            {
+                "type": "PowerShell",
+                "name": "settingUpMgmtAgtPath",
+                "inline": [
+                    "mkdir c:\\buildActions",
+                    "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt"
+                ]
+            },
+                
+            {
+                "type": "WindowsUpdate",
+                "searchCriteria": "IsInstalled=0",
+                "filters": [
+                    "exclude:$_.Title -like '*Preview*'",
+                    "include:$true"
+                            ],
+                "updateLimit": 20
+            }
+        ],
+        "distribute": 
+            [
+                {   "type":"ManagedImage",
+                    "imageId": "/subscriptions/98d18bb7-62b4-4fb6-b35b-9416f12eb2cc/resourceGroups/GCDOCS-dev-rg/providers/Microsoft.Compute/images/win2019image",
+                    "location": "eastus",
+                    "runOutputName": "win2019imagero",
+                    "artifactTags": {
+                        "source": "azVmImageBuilder",
+                        "baseosimg": "windows2019"
+                    }
+                }
+            ]
+        }
+    }
+    ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

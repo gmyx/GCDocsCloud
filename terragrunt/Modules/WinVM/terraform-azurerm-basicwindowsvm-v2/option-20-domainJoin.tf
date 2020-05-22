@@ -18,7 +18,7 @@ variable "domainToJoin" {
 
 resource "azurerm_virtual_machine_extension" "DomainJoinExtension" {
   count                = var.domainToJoin == null ? 0 : 1
-  name                 = "DomainJoinExtension"
+  name                 = "${var.name}-DomainJoinExtension"
   depends_on           = [azurerm_virtual_machine_extension.CustomScriptExtension]
   virtual_machine_id   = azurerm_windows_virtual_machine.VM.id
   publisher            = "Microsoft.Compute"
@@ -26,7 +26,7 @@ resource "azurerm_virtual_machine_extension" "DomainJoinExtension" {
   type_handler_version = "1.3"
 
   settings = <<SETTINGS
-        {  
+        {
           "Name": "${var.domainToJoin.domainName}",
           "OUPath": "${var.domainToJoin.ouPath}",
           "User": "${var.domainToJoin.domainName}\\${var.domainToJoin.domainUsername}",

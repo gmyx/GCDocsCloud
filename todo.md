@@ -19,3 +19,7 @@ Fixed Admin + Fixed Agent
 | in DSc Module, Find a way to mask the client secret. Write it to file? | | Not Started |
 | in DSC module, add a privitioner to destroyu the compiled MOF | | Not Started |
 | in VM DSC section, add a method to detroy the asssociation (to be verifyed) | | Not Started |
+| ImageBuilder: Use shared image gallery | Exploring | In progress |
+| ImageBuilder: Import MSI from storage account to deploy CS/Orcale Client | | Not Started |
+| Explore the possiblilty of partial DSCs allowing a DRY DSC | | Not Started |
+| Determine a method to updated DSC without destroying a VM | | Not Started |

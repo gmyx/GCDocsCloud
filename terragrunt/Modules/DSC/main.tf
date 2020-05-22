@@ -31,13 +31,15 @@ resource "azurerm_automation_module" "StorageDSC" {
   }
 }
 
-#compile the mof - NOTE: Need a delete provitioner to remove the compiled MOF on destroy
+#compiling the mof must be done form the WimVM module due to custom params.
+
+/* #compile the mof - NOTE: Need a delete provitioner to remove the compiled MOF on destroy
 resource "null_resource" "compileMOF" {
   #not sure on triggers
   /*triggers = {
     #this should force this resource to run everytime
     always_run = timestamp()
-  }*/
+  }*-/
   depends_on = [azurerm_automation_module.StorageDSC]
 
   #provisioner used to compile the DSC so it can be read in the next step
@@ -47,30 +49,4 @@ resource "null_resource" "compileMOF" {
     interpreter = ["PowerShell"] #, "-file"]
     working_dir = "compileScript"
   }
-}
-
-/* old code below - will be removed if this process works as expected
-#run a script to compile
-resource "null_resource" "compileMOF" {
-  triggers = {
-    #this should force this resource to run everytime
-    always_run = timestamp()
-  }
-
-  #provisioner used to compile the DSC so it can be read in the next step
-  provisioner "local-exec" {
-    command = "compile.ps1"
-    interpreter = ["PowerShell", "-file"]
-    working_dir = "Source"
-  }
-}
-
-#compile it
-resource "azurerm_automation_dsc_nodeconfiguration" "GCDOCSDSCNode" {
-  name                    = "GCDOCSDsc.localhost"
-  resource_group_name     = var.resource_group_name
-  automation_account_name = var.automation_account_name
-  depends_on              = [azurerm_automation_dsc_configuration.GCDOCS-DSC, null_resource.compileMOF]
-
-  content_embedded        = file("Source/GCDOCSDsc/localhost.mof")
-}*/
+} */

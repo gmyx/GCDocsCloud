@@ -6,7 +6,8 @@ param (
     [string]$client_secret = $(throw 'client_secret is required'),
     [string]$configName = $(throw 'configName is required'),
     [string]$automationAccountName = $(throw 'automationAccountName is required'),
-    [string]$resourceGroupName = $(throw 'resourceGroupName is required')
+    [string]$resourceGroupName = $(throw 'resourceGroupName is required'),
+    [string]$CustomString = $(throw 'CustomString is required')
 )
 
 Import-Module Az.Automation
@@ -31,7 +32,8 @@ Function CompileDSCConfiguration{
     Param(
         [string]$configName,
         [string]$automationAccountName,
-        [string]$resourceGroupName
+        [string]$resourceGroupName#,
+        #[string]
     )
 
     $ConfigData = @{
@@ -44,11 +46,18 @@ Function CompileDSCConfiguration{
         )
     }
 
+    #custom params to send to the compiller to include in the DSC
+    #this is how we pass the vars need to connect to cold storage
+    $Params = @{
+        CustomString = $CustomString
+    }
+
     $compParams = @{
         AutomationAccountName = $automationAccountName
         ResourceGroupName = $resourcegroupname
         ConfigurationName = $configName
         ConfigurationData = $ConfigData
+        Parameters = $Params
     }
 
     #start it and forget about it - move on!

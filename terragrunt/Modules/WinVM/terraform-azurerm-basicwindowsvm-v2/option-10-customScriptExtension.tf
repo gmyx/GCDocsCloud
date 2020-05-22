@@ -13,14 +13,14 @@ variable "custom_data" {
 resource "azurerm_virtual_machine_extension" "CustomScriptExtension" {
 
   count                = var.custom_data == null ? 0 : 1
-  name                 = "CustomScriptExtension"
+  name                 = "${var.name}-CustomScriptExtension"
   virtual_machine_id   = azurerm_windows_virtual_machine.VM.id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
   type_handler_version = "1.9"
 
   settings = <<SETTINGS
-        {   
+        {
         "commandToExecute": "powershell -command copy-item \"c:\\AzureData\\CustomData.bin\" \"c:\\AzureData\\CustomData.ps1\";\"c:\\AzureData\\CustomData.ps1\""
         }
 SETTINGS

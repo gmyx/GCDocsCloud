@@ -2,8 +2,19 @@
 #important note: the name here MUST == terraform name property
 Configuration GCDOCSDsc
 {
+  param(
+    #[Parameter(Mandatory=$true)]
+    #[ValidateNotNullorEmpty()]
+    [PSCredential]
+    $NetworkShareCredential,
+
+    [string]
+    $CustomString
+  )
+
   Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
   Import-DscResource -ModuleName 'StorageDSC'
+  Import-DscResource -ModuleName 'xPowerShellExecutionPolicy'
 
   Node "localhost"
   {
@@ -136,9 +147,9 @@ Configuration GCDOCSDsc
     }
 
     #.NET Framework 3.5 Features -> HTTP Activation
-    WindowsFeature NET-WCF-HTTP-Activation
+    WindowsFeature NET-WCF-HTTP-Activation45
     {
-      Name = "NET-WCF-HTTP-Activation"
+      Name = "NET-WCF-HTTP-Activation45"
       Ensure = "Present"
     }
     #END REGION: .NET Framework 4.5 Features
@@ -162,21 +173,21 @@ Configuration GCDOCSDsc
       RetryIntervalSec = 60
       RetryCount = 60
     }
-    Disk EVolume
+    Disk FVolume
     {
       DiskId = 2
       DriveLetter = 'F'
       FSLabel = "App"
       DependsOn = '[WaitForDisk]Disk2'
     }
-    Disk FVolume
+    Disk GVolume
     {
       DiskId = 3
       DriveLetter = 'G'
       FSLabel = "Logs"
       DependsOn = '[WaitForDisk]Disk3'
     }
-    Disk GVolume
+    Disk HVolume
     {
       DiskId = 4
       DriveLetter = 'H'
@@ -184,5 +195,28 @@ Configuration GCDOCSDsc
       DependsOn = '[WaitForDisk]Disk4'
     }
     #END REGION: StorageDSC - Init all 3 Disks
+
+    #REGION xPowerShellExecutionPolicy - enforce RemoteSigned
+    xPowerShellExecutionPolicy ExecutionPolicy
+    {
+        ExecutionPolicy = "RemoteSigned"
+    }
+
+    #Test REGION
+    File TestFile {
+      DestinationPath = "F:\README.TXT"
+      Contents = "Application static files $CustomString"
+      Type = "File"
+      Ensure = "Present"
+      DependsOn = '[Disk]FVolume'
+    }
+
+    File TestFile2 {
+      DestinationPath = "G:\README.TXT"
+      Contents = "Application log files $CustomString"
+      Type = "File"
+      Ensure = "Present"
+      DependsOn = '[Disk]FVolume'
+    }
   }
 }
