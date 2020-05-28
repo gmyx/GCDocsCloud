@@ -7,7 +7,10 @@ param (
     [string]$configName = $(throw 'configName is required'),
     [string]$automationAccountName = $(throw 'automationAccountName is required'),
     [string]$resourceGroupName = $(throw 'resourceGroupName is required'),
-    [string]$CustomString = $(throw 'CustomString is required')
+    [string]$Environment = $(throw 'Environment is required'),
+    [string]$NetworkSharePath = $(throw 'NetworkSharePath is required'),
+    [string]$StorageAccountName = $(throw 'StorageAccountName is required'),
+    [string]$NetworkShareCredentialName = $(throw 'NetworkShareCredentialName is required')
 )
 
 Import-Module Az.Automation
@@ -16,7 +19,7 @@ Function Connect-WithCreds {
     param (
         [string]$subscription_id,
         [string]$tenant_id,
-        [string]$client_id ,
+        [string]$client_id,
         [string]$client_secret
     )
 
@@ -32,24 +35,35 @@ Function CompileDSCConfiguration{
     Param(
         [string]$configName,
         [string]$automationAccountName,
-        [string]$resourceGroupName#,
-        #[string]
+        [string]$resourceGroupName,
+        [string]$NetworkSharePath,
+        [string]$StorageAccountName,
+        [string]$NetworkShareCredentialName
+
     )
 
     $ConfigData = @{
         AllNodes = @(
             @{
                 NodeName = 'localhost'
-                #PSDscAllowPlainTextPassword = $true
+                PSDscAllowPlainTextPassword = $true #needed for Creds
                 PSDscAllowDomainUser = $true
             }
         )
     }
 
+    #NetworkSharePath needs to be massaged to remote http:// and trailling /
+    $Pattern = "https:\/\/(.*)\/"
+    $NetworkSharePath -match $Pattern
+    $NetworkSharePath = $Matches[1]
+
     #custom params to send to the compiller to include in the DSC
     #this is how we pass the vars need to connect to cold storage
     $Params = @{
-        CustomString = $CustomString
+        Environment = $Environment
+        NetworkSharePath = $NetworkSharePath
+        NetworkShareCredentialName = $NetworkShareCredentialName
+        StorageAccountName = $StorageAccountName
     }
 
     $compParams = @{
@@ -64,5 +78,14 @@ Function CompileDSCConfiguration{
     $CompilationJob = Start-AzAutomationDscCompilationJob @compParams
 }
 
+write-host "Compiling DSC" -ForegroundColor Blue -BackgroundColor White
 Connect-WithCreds -subscription_id $subscription_id -tenant_id $tenant_id -client_id $client_id -client_secret $client_secret
-$null = CompileDSCConfiguration -configName $configName -automationAccountName $automationAccountName -resourceGroupName $resourceGroupName
+$Params = @{
+    configName = $configName
+    automationAccountName = $automationAccountName
+    resourceGroupName = $resourceGroupName
+    NetworkSharePath = $NetworkSharePath
+    StorageAccountName = $StorageAccountName
+    NetworkShareCredentialName = $NetworkShareCredentialName
+}
+$null = CompileDSCConfiguration @Params

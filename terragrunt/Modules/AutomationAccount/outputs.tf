@@ -7,9 +7,11 @@ output "dsc_server_endpoint" {
 }
 
 output "dsc_primary_access_key" {
+  sensitive = true
   value = azurerm_automation_account.GCDOCS-DSC.dsc_primary_access_key
 }
 
 output "dsc_secondary_access_key" {
+  sensitive = true
   value = azurerm_automation_account.GCDOCS-DSC.dsc_secondary_access_key
 }

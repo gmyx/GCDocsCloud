@@ -4,7 +4,7 @@
 locals {
   # Automatically load environment-level variables
   location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
-  //environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))  # Automatically load account-level variables
+  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))  # Automatically load account-level variables
   account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl","account.hcl"))
   account_secret_vars = read_terragrunt_config(find_in_parent_folders("account_secret.hcl","account.hcl"))
 
@@ -16,7 +16,10 @@ locals {
 
   # Extract out common variables for reuse
   location = local.location_vars.locals.location
-  //environment = local.environment_vars.locals.environment
+
+  #can't rely on dependency here, so load it from the env source file
+  resource_group_name = local.environment_vars.locals.resource_group_name
+  automation_account_name = local.environment_vars.locals.automation_account_name
 }
 
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
@@ -29,6 +32,19 @@ terraform {
   before_hook "updateHash" {
     commands     = ["apply", "plan"]
     execute      = ["PowerShell", "source/generateHash.ps1"]
+  }
+
+  before_hook "importStorage" {
+    #gcdocsinstallers
+    commands     = ["apply", "plan"]
+    #send to import powershell to intelegently import
+    execute = ["PowerShell", "tfImport/tfImport.ps1",
+      "-subscription_id", local.subscription_id,
+      "-client_id", local.client_id,
+      "-client_secret", local.client_secret,
+      "-tenant_id", local.tenant_id,
+      "-resource_group_name", local.resource_group_name,
+      "-automation_account_name", local.automation_account_name]
   }
 }
 
@@ -45,10 +61,17 @@ dependency "AutomationAccount" {
   config_path = "../AutomationAccount"
 }
 
+dependency "ColdStorage" {
+  config_path = "../ColdStorage"
+}
+
 inputs = {
   location = local.location
   resource_group_name = dependency.ResourceGroup.outputs.resource_group_name
   automation_account_name = dependency.AutomationAccount.outputs.automation_account_name
+  storage_access_url = dependency.ColdStorage.outputs.primary_file_endpoint
+  storage_account_name = dependency.ColdStorage.outputs.coldstorage_name
+  fileshare_accesskey = dependency.ColdStorage.outputs.primary_access_key
   subscription_id   = local.subscription_id
   client_id         = local.client_id
   client_secret     = local.client_secret

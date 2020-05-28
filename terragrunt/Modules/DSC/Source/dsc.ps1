@@ -5,16 +5,23 @@ Configuration GCDOCSDsc
   param(
     #[Parameter(Mandatory=$true)]
     #[ValidateNotNullorEmpty()]
-    [PSCredential]
-    $NetworkShareCredential,
+    [string]
+    $NetworkShareCredentialName = "blank",
 
     [string]
-    $CustomString
+    $Environment,
+
+    [string]
+    $NetworkSharePath,
+
+    [string]
+    $StorageAccountName
   )
 
-  Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
-  Import-DscResource -ModuleName 'StorageDSC'
-  Import-DscResource -ModuleName 'xPowerShellExecutionPolicy'
+  Import-DscResource -ModuleName PSDesiredStateConfiguration
+  Import-DscResource -ModuleName StorageDSC
+  Import-DscResource -ModuleName ComputerManagementDsc
+  $NetworkShareCredential = Get-AutomationPSCredential $NetworkShareCredentialName
 
   Node "localhost"
   {
@@ -196,16 +203,17 @@ Configuration GCDOCSDsc
     }
     #END REGION: StorageDSC - Init all 3 Disks
 
-    #REGION xPowerShellExecutionPolicy - enforce RemoteSigned
-    xPowerShellExecutionPolicy ExecutionPolicy
+    #REGION PowerShellExecutionPolicy - enforce RemoteSigned
+    PowerShellExecutionPolicy ExecutionPolicy
     {
+        ExecutionPolicyScope = "LocalMachine"
         ExecutionPolicy = "RemoteSigned"
     }
 
     #Test REGION
     File TestFile {
       DestinationPath = "F:\README.TXT"
-      Contents = "Application static files $CustomString"
+      Contents = "Application static files $Environment"
       Type = "File"
       Ensure = "Present"
       DependsOn = '[Disk]FVolume'
@@ -213,10 +221,33 @@ Configuration GCDOCSDsc
 
     File TestFile2 {
       DestinationPath = "G:\README.TXT"
-      Contents = "Application Log files ONLY PLEASE!!! $CustomString"
+      Contents = "Application Log files ONLY PLEASE!!! `r`n\\$NetworkSharePath\$StorageAccountName\16.2.11_CS64_WIN.exe"
+      Type = "File"
+      Ensure = "Present"
+      DependsOn = '[Disk]GVolume'
+    }
+
+    #try to copy the files from the installer share
+    File CSInstaller {
+      #16.2.11_CS64_WIN.exe
+      DestinationPath = "F:\Installers\16.2.11_CS64_WIN.exe"
+      SourcePath = "\\$NetworkSharePath\$StorageAccountName\16.2.11_CS64_WIN.exe"
       Type = "File"
       Ensure = "Present"
       DependsOn = '[Disk]FVolume'
+      Credential = $NetworkShareCredential
+    }
+
+    #
+    File OracleInstaller {
+      #16.2.11_CS64_WIN.exe
+      DestinationPath = "F:\Installers\OracleAutomated"
+      SourcePath = "\\$NetworkSharePath\$StorageAccountName\OracleAutomated"
+      Type = "Directory"
+      Recurse = $true
+      Ensure = "Present"
+      DependsOn = '[Disk]FVolume'
+      Credential = $NetworkShareCredential
     }
   }
 }

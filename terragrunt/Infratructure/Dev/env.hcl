@@ -2,4 +2,6 @@
 # feed forward to the child modules.
 locals {
   environment = "dev"
+  resource_group_name = "GCDOCS-dev-rg" #hard codded, it is assigned
+  automation_account_name = "GCDOCS-DSC"
 }

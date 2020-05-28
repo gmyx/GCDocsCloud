@@ -38,8 +38,8 @@ if ($DoRun -eq $true -or $Force -eq $true) {
         Exit 1 #1 is bad
     } else {
         #run it to compile, need to be true or else fails
-        write-output "Compiling Configurations"
-        GCDOCSDsc | Out-Null
+        write-output "Compiling Configurations Locally"
+        #GCDOCSDsc | Out-Null NOT COMPATIBLE WITH CREDENTIALS
 
         #update Hash
         $NewSHA256 = (Get-FileHash $DSCFilename -Algorithm SHA256).Hash

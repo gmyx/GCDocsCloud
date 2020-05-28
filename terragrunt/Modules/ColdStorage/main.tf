@@ -1,5 +1,6 @@
+#note: the name of this resource is referenced in Intrastructure/{env}/ColdStorage -> terraform -> Before_hook
 resource "azurerm_storage_account" "gcdocsinstallers" {
-  name                     = "gcdocsinstallers"
+  name                     = var.storage_account_name
   location                 = var.location
   resource_group_name      = var.resource_group_name
   account_kind             = "StorageV2"
@@ -13,7 +14,7 @@ resource "azurerm_storage_account" "gcdocsinstallers" {
 }
 
 resource "azurerm_storage_share" "coldshare" {
-  name                 = "gcdocsinstallers"
+  name                 = var.storage_share_name
   storage_account_name = azurerm_storage_account.gcdocsinstallers.name
   quota                = 10
 
