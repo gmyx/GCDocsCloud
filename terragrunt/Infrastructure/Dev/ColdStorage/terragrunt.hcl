@@ -5,7 +5,7 @@ locals {
   # Automatically load environment-level variables
   location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
   environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl","account.hcl"))
+  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl.json","account.hcl.json"))
 
   # Extract out common variables for reuse
   location = local.location_vars.locals.location

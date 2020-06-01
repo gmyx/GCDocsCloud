@@ -54,16 +54,38 @@ if (($results2 -notmatch "Resource already managed by Terraform") -and
     #try to trigger an update
     $moduleName = "ComputerManagementDsc"
     $moduleVersion = "8.2.0"
-    $Params = @{
+
+    #set-up initial get
+    $GetParams = @{
         AutomationAccountName = $automation_account_name
         ResourceGroupName = $resource_group_name
         Name = $moduleName
-        ContentLinkUri = "https://www.powershellgallery.com/api/v2/package/$moduleName/$moduleVersion"
     }
-    New-AzAutomationModule @Params
+    $Status = Get-AzAutomationModule @GetParams
 
-    #wait until it is imported
+    #check version
+    if ($Status.Version -ne $moduleVersion) {
+        $Params = @{
+            AutomationAccountName = $automation_account_name
+            ResourceGroupName = $resource_group_name
+            Name = $moduleName
+            ContentLinkUri = "https://www.powershellgallery.com/api/v2/package/$moduleName/$moduleVersion"
+        }
+        New-AzAutomationModule @Params
 
+        #wait until it is imported
+
+        $Tries = 0
+        $Status = Get-AzAutomationModule @GetParams
+        while ($Status.ProvisioningState -ne "Succeeded" -and $Tries -lt 20) {
+            write-host "Waiting for module to be imported. Current Status $($Status.ProvisioningState)"  -ForegroundColor Blue -BackgroundColor White
+            start-sleep -seconds 5
+            $Tries = $Tries + 1 #emerg break out
+            $Status = Get-AzAutomationModule @GetParams
+        }
+
+        if ($Tries -ge 20) {exit 1} #error
+    }
 }
 
 Exit $ExitCode

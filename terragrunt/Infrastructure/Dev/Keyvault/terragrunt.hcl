@@ -4,7 +4,7 @@
 locals {
   # Automatically load environment-level variables
   location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
-  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl","account.hcl"))
+  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl.json","account.hcl.json"))
   #environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
 
   # Extract out common variables for reuse
@@ -16,7 +16,7 @@ locals {
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
-  #ideally a git server, but for testing, full local  
+  #ideally a git server, but for testing, full local
   source = "../../../modules/keyvault"
 }
 

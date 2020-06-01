@@ -6,8 +6,8 @@
 
 locals {
   # Automatically load account-level variables
-  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl","account.hcl"))
-  account_secret_vars = read_terragrunt_config(find_in_parent_folders("account_secret.hcl","account.hcl"))
+  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl.json","account.hcl.json"))
+  account_secret_vars = read_terragrunt_config(find_in_parent_folders("account_secret.hcl.json","account_secret.hcl.json"))
 
   # Extract the variables we need for easy access
   subscription_id   = local.account_vars.locals.subscription_id

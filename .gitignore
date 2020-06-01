@@ -1,6 +1,8 @@
-/terragrunt/Infratructure/Dev/.terragrunt-cache
-/terragrunt/Infratructure/Dev/account_secret.hcl
-/terragrunt/Infratructure/Dev/Clusters/dev1/single/admin_secret.hcl
-/terragrunt/Infratructure/Dev/Clusters/dev1/single/.terragrunt-cache
+/terragrunt/Infrastructure/Dev/.terragrunt-cache
+/terragrunt/Infrastructure/Dev/account_secret.hcl
+/terragrunt/Infrastructure/Dev/account_secret.hcl.json
+/terragrunt/Infrastructure/Dev/Clusters/dev1/single/admin_secret.hcl
+/terragrunt/Infrastructure/Dev/Clusters/dev1/single/.terragrunt-cache
 /terragrunt/Modules/DSC/Source/GCDOCSDsc
 /terragrunt/Modules/DSC/Source/GCDOCSDsc.sha256
+

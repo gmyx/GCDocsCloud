@@ -42,9 +42,9 @@ module "WinVM" {
   vm_size = var.size
   location = var.location
   load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids
-  data_disk_sizes_gb = [80,40,20]
+  data_disk_sizes_gb = [80,40]
   ## hardcoding for testing only
-  //source_image_id = "/subscriptions/98d18bb7-62b4-4fb6-b35b-9416f12eb2cc/resourceGroups/GCDOCS-dev-rg/providers/Microsoft.Compute/images/win2019image"
+  source_image_id = "/subscriptions/98d18bb7-62b4-4fb6-b35b-9416f12eb2cc/resourceGroups/GCDOCS-dev-rg/providers/Microsoft.Compute/images/gcdocsGoldBuild"
   /*storage_image_reference = {
     publisher = "MicrosoftWindowsServer"
     offer     = "WindowsServer"

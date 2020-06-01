@@ -94,13 +94,13 @@ resource azurerm_windows_virtual_machine VM {
   admin_password                   = var.admin_password #moved out of os_profile
   custom_data                      = var.custom_data #moved out of os_profile
   provision_vm_agent               = true #move out of os_profile_windows_config
-  //source_image_id                  = var.source_image_id
-  source_image_reference {
+  source_image_id                  = var.source_image_id
+ /* source_image_reference {
     publisher = var.storage_image_reference.publisher
     offer     = var.storage_image_reference.offer
     sku       = var.storage_image_reference.sku
     version   = var.storage_image_reference.version
-  }
+  }*/
   dynamic "plan" {
     for_each = local.plan
     content {
