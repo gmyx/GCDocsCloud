@@ -4,7 +4,7 @@
 locals {
   # Automatically load environment-level variables
   location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
-  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl.json"))
   account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl.json","account.hcl.json"))
 
   # Extract out common variables for reuse
@@ -12,8 +12,8 @@ locals {
   subscription_id   = local.account_vars.locals.subscription_id
 
   #names used for the storage accounts
-  storage_account_name = "gcdocsinstallers"
-  storage_share_name = "gcdocsinstallers"
+  storage_account_name = local.environment_vars.locals.cold_storage_account_name #"gcdocsinstallers"
+  storage_share_name = local.environment_vars.locals.cold_storage_share_name  #"gcdocsinstallers"
 
   #can't rely on dependency here, so load it from the env source file
   rgn = local.environment_vars.locals.resource_group_name
@@ -29,7 +29,11 @@ terraform {
     #gcdocsinstallers
     commands     = ["apply", "plan"]
     #send to import powershell to intelegently import
-    execute = ["PowerShell", "tfImport/tfImport.ps1", "-SubscriptionID", local.subscription_id, "-ResourceGroupName", local.rgn, "-StorageAccountName", local.storage_account_name]
+    execute = ["PowerShell", "tfImport/tfImport.ps1",
+      "-SubscriptionID", local.subscription_id,
+      "-ResourceGroupName", local.rgn,
+      "-StorageAccountName", local.storage_account_name,
+      "-ShareName", local.storage_share_name]
   }
 }
 

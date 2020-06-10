@@ -1,3 +1,4 @@
+/tmp
 /terragrunt/Infrastructure/Dev/.terragrunt-cache
 /terragrunt/Infrastructure/Dev/account_secret.hcl
 /terragrunt/Infrastructure/Dev/account_secret.hcl.json

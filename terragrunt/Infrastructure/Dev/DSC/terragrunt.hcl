@@ -4,7 +4,7 @@
 locals {
   # Automatically load environment-level variables
   location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
-  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))  # Automatically load account-level variables
+  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl.json"))  # Automatically load account-level variables
   account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl.json","account.hcl.json"))
   account_secret_vars = read_terragrunt_config(find_in_parent_folders("account_secret.hcl.json","account.hcl.json"))
 

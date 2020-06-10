@@ -95,7 +95,7 @@ resource azurerm_windows_virtual_machine VM {
   custom_data                      = var.custom_data #moved out of os_profile
   provision_vm_agent               = true #move out of os_profile_windows_config
   source_image_id                  = var.source_image_id
- /* source_image_reference {
+  /*source_image_reference {
     publisher = var.storage_image_reference.publisher
     offer     = var.storage_image_reference.offer
     sku       = var.storage_image_reference.sku
@@ -159,7 +159,7 @@ resource azurerm_virtual_machine_data_disk_attachment attached_data_disk {
 
   managed_disk_id     = azurerm_managed_disk.DataDisk[count.index].id
   virtual_machine_id  = azurerm_windows_virtual_machine.VM.id
-  lun                 = count.index + 1
+  lun                 = count.index
   caching             = "ReadWrite"
 }
 

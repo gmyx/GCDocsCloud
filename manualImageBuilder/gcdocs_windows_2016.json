@@ -1,0 +1,118 @@
+{
+  "variables":
+  {
+    "sourceFolders":      "Oracle,CS",
+    "subscription_id":            null,
+    "tenant_id":                  null,
+    "client_id":                  null,
+    "client_secret":              null,
+    "resource_group_name":        null,
+    "cold_storage_account_name":  null,
+    "cold_storage_share_name":    null,
+    "sastoken" :                  null
+  },
+  "builders": [
+    {
+      "type": "azure-arm",
+
+      "subscription_id":                    "{{user `subscription_id`}}",
+      "tenant_id":                          "{{user `tenant_id`}}",
+      "client_id":                          "{{user `client_id`}}",
+      "client_secret":                      "{{user `client_secret`}}",
+
+
+      "shared_image_gallery_destination": {
+        "resource_group": "{{user `resource_group_name`}}",
+        "gallery_name": "GCdocsImages",
+        "image_name": "CS16.2.11",
+        "image_version": "1.0.0",
+        "replication_regions": ["EastUS"]
+      },
+      "managed_image_resource_group_name":  "{{user `resource_group_name`}}",
+      "managed_image_name":                 "CS16.2.11",
+      "build_resource_group_name":          "{{user `resource_group_name`}}",
+
+      "disk_additional_size":               [80,40],
+
+      "os_type":                            "Windows",
+      "image_publisher":                    "MicrosoftWindowsServer",
+      "image_offer":                        "WindowsServer",
+      "image_sku":                          "2016-Datacenter",
+
+      "communicator":                       "winrm",
+      "winrm_use_ssl":                      true,
+      "winrm_insecure":                     true,
+      "winrm_timeout":                      "15m",
+      "winrm_username":                     "packer",
+
+      "azure_tags": {
+        "CostCenter":  "PSPC-GCWide",
+        "Owner":       "guy.moreau2@tpsgc-pwgsc.gc.ca",
+        "Program":     "GCdocs",
+        "Environment": "Sandbox"
+      },
+
+      "vm_size": "Standard_D4_v3"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "environment_vars": [
+        "SASTOKEN={{user `sastoken`}}"
+      ],
+      "script": "stageAzcopy.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "initDisks.ps1"
+    },
+    {
+      "type": "powershell",
+      "environment_vars": [
+        "SASTOKEN={{user `sastoken`}}",
+        "SOURCEFOLDERS={{user `sourceFolders`}}"
+      ],
+      "script": "stageBinaries.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "..\\installers\\Oracle\\install.ps1"
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "Add-WindowsFeature FS-FileServer",
+        "Add-WindowsFeature Web-Server",
+        "Add-WindowsFeature Web-Dir-Browsing",
+        "Add-WindowsFeature Web-Request-Monitor",
+        "Add-WindowsFeature Web-App-Dev",
+        "Add-WindowsFeature Web-Net-Ext",
+        "Add-WindowsFeature Web-Net-Ext45",
+        "Add-WindowsFeature Web-Asp-Net45",
+        "Add-WindowsFeature Web-CGI",
+        "Add-WindowsFeature Web-ISAPI-Ext",
+        "Add-WindowsFeature Web-ISAPI-Filter",
+        "Add-WindowsFeature Web-Mgmt-Tools",
+        "Add-WindowsFeature NET-Framework-Features",
+        "Add-WindowsFeature NET-Framework-Core",
+        "Add-WindowsFeature NET-HTTP-Activation",
+        "Add-WindowsFeature NET-Non-HTTP-Activ",
+        "Add-WindowsFeature NET-Framework-45-ASPNET",
+        "Add-WindowsFeature NET-WCF-HTTP-Activation45"
+      ]
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        " # NOTE: the following *3* lines are only needed if the you have installed the Guest Agent.",
+        "  while ((Get-Service RdAgent).Status -ne 'Running') { Start-Sleep -s 5 }",
+        " # while ((Get-Service WindowsAzureTelemetryService).Status -ne 'Running') { Start-Sleep -s 5 }",
+        " # while ((Get-Service WindowsAzureGuestAgent).Status -ne 'Running') { Start-Sleep -s 5 }",
+
+        "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit /mode:vm",
+        "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
+      ]
+    }
+  ]
+}

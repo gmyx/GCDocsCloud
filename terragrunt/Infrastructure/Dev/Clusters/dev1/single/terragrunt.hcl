@@ -1,6 +1,6 @@
 locals {
   # Automatically load environment-level variables
-  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl.json"))
   location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
   cluster_vars = read_terragrunt_config(find_in_parent_folders("cluster.hcl"))
   vmdata_vars = read_terragrunt_config("vmdata.hcl")
