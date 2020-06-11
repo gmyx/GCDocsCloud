@@ -25,7 +25,7 @@
         "resource_group": "{{user `resource_group_name`}}",
         "gallery_name": "GCdocsImages",
         "image_name": "CS16.2.11",
-        "image_version": "1.0.0",
+        "image_version": "0.1.0",
         "replication_regions": ["EastUS"]
       },
       "managed_image_resource_group_name":  "{{user `resource_group_name`}}",
@@ -77,10 +77,6 @@
     },
     {
       "type": "powershell",
-      "script": "..\\installers\\Oracle\\install.ps1"
-    },
-    {
-      "type": "powershell",
       "inline": [
         "Add-WindowsFeature FS-FileServer",
         "Add-WindowsFeature Web-Server",
@@ -101,6 +97,14 @@
         "Add-WindowsFeature NET-Framework-45-ASPNET",
         "Add-WindowsFeature NET-WCF-HTTP-Activation45"
       ]
+    },
+    {
+      "type": "powershell",
+      "script": "..\\installers\\Oracle\\install.ps1"
+    },
+    {
+      "type": "powershell",
+      "script": "..\\installers\\CS\\install.ps1"
     },
     {
       "type": "powershell",

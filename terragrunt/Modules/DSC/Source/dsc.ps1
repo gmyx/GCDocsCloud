@@ -162,7 +162,7 @@ Configuration GCDOCSDsc
     #END REGION: .NET Framework 4.5 Features
 
     #BEGIN REGION: StorageDSC - Init all 3 Disks
-    WaitForDisk Disk2
+    <#WaitForDisk Disk2
     {
       DiskId = 2
       RetryIntervalSec = 60
@@ -174,12 +174,6 @@ Configuration GCDOCSDsc
       RetryIntervalSec = 60
       RetryCount = 60
     }
-    WaitForDisk Disk4
-    {
-      DiskId = 1
-      RetryIntervalSec = 60
-      RetryCount = 60
-    }
     Disk FVolume
     {
       DiskId = 2
@@ -187,20 +181,7 @@ Configuration GCDOCSDsc
       FSLabel = "App"
       DependsOn = '[WaitForDisk]Disk2'
     }
-    Disk GVolume
-    {
-      DiskId = 3
-      DriveLetter = 'G'
-      FSLabel = "Logs"
-      DependsOn = '[WaitForDisk]Disk3'
-    }
-    Disk HVolume
-    {
-      DiskId = 4
-      DriveLetter = 'H'
-      FSLabel = "EFS"
-      DependsOn = '[WaitForDisk]Disk4'
-    }
+    Disk GVolume#>
     #END REGION: StorageDSC - Init all 3 Disks
 
     #REGION PowerShellExecutionPolicy - enforce RemoteSigned
@@ -228,7 +209,7 @@ Configuration GCDOCSDsc
     }
 
     #try to copy the files from the installer share
-    File CSInstaller {
+    <#File CSInstaller {
       #16.2.11_CS64_WIN.exe
       DestinationPath = "F:\Installers\16.2.11_CS64_WIN.exe"
       SourcePath = "\\$NetworkSharePath\$StorageAccountName\16.2.11_CS64_WIN.exe"
@@ -248,6 +229,6 @@ Configuration GCDOCSDsc
       Ensure = "Present"
       DependsOn = '[Disk]FVolume'
       Credential = $NetworkShareCredential
-    }
+    }#>
   }
 }

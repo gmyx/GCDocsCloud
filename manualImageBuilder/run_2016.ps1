@@ -12,6 +12,13 @@ $EnvironmentInfo = Get-Content -raw -path "$PathToEnv\env.hcl.json" | ConvertFro
 
 import-module az.storage
 
+#connect to AZ using account info
+$passwd = ConvertTo-SecureString $AccountSecretInfo.locals.client_secret -AsPlainText -Force
+$pscredential = New-Object System.Management.Automation.PSCredential($AccountInfo.locals.client_id, $passwd)
+Connect-AzAccount -ServicePrincipal -Credential $pscredential `
+    -SubscriptionId $AccountInfo.locals.subscription_id `
+    -TenantId $AccountInfo.locals.tenant_id | out-null
+
 #get a sas tocken from the storage account
 $destKey = (Get-AzStorageAccountKey -ResourceGroupName $EnvironmentInfo.locals.resource_group_name -AccountName $EnvironmentInfo.locals.cold_storage_account_name).Value[0]
 $destContext = New-AzStorageContext -StorageAccountName $EnvironmentInfo.locals.cold_storage_account_name -StorageAccountKey $destKey

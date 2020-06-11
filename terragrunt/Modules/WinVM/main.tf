@@ -50,13 +50,13 @@ module "WinVM" {
   data_disk_create_option = "FromImage"
   data_disk_sizes_gb = [80,40]
   ## hardcoding for testing only
-  source_image_id = data.azurerm_image.packer-image.id
-  /*storage_image_reference = {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
-    version   = "latest"
-  }*/
+  //source_image_id = data.azurerm_image.packer-image.id
+  storage_image_reference = {
+    publisher = "GCDocs"
+    offer     = "GB16_2_11"
+    sku       = "GB16_2_11"
+    version   = "0.1.0"
+  }
 
   //custom_data = filebase64("serverConfig/serverConfig.ps1")
   #vm_depends_on = azurerm_network_interface_nat_rule_association.NatRule

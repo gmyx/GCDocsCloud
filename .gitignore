@@ -7,3 +7,5 @@
 /terragrunt/Modules/DSC/Source/GCDOCSDsc
 /terragrunt/Modules/DSC/Source/GCDOCSDsc.sha256
 
+/installers/CS/les_pre_install.msi
+/installers/CS/16.2.11_CS64_WIN.msi
