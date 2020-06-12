@@ -29,10 +29,10 @@ resource "azurerm_network_interface_nat_rule_association" "NatRule" {
   depends_on = [module.WinVM]
 }
 
-data "azurerm_image" "packer-image" {
+/*data "azurerm_image" "packer-image" {
   name                = "gcdocsGoldbuild"
   resource_group_name = "GCDOCS-dev-rg"
-}
+}*/
 
 module "WinVM" {
   source = "./terraform-azurerm-basicwindowsvm-v2"

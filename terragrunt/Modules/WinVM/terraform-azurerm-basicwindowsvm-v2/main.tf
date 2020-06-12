@@ -94,13 +94,13 @@ resource azurerm_windows_virtual_machine VM {
   admin_password                   = var.admin_password #moved out of os_profile
   custom_data                      = var.custom_data #moved out of os_profile
   provision_vm_agent               = true #move out of os_profile_windows_config
-  source_image_id                  = var.source_image_id
-  /*source_image_reference {
+  //source_image_id                  = var.source_image_id
+  source_image_reference {
     publisher = var.storage_image_reference.publisher
     offer     = var.storage_image_reference.offer
     sku       = var.storage_image_reference.sku
     version   = var.storage_image_reference.version
-  }*/
+  }
   dynamic "plan" {
     for_each = local.plan
     content {
@@ -146,7 +146,7 @@ resource azurerm_windows_virtual_machine VM {
 resource azurerm_managed_disk DataDisk {
   count                 = length(var.data_disk_sizes_gb)
 
-  name                  = "${var.name}-datadisk${count.index + 1}"
+  name                  = "${var.name}-datadisk${count.index}"
   location              = var.location
   resource_group_name   = var.resource_group_name
   storage_account_type  = var.data_managed_disk_type
@@ -170,4 +170,6 @@ resource azurerm_network_interface_backend_address_pool_association PoolAssociat
   network_interface_id    = azurerm_network_interface.NIC.id
   ip_configuration_name   = azurerm_network_interface.NIC.ip_configuration[0].name
   backend_address_pool_id = var.load_balancer_backend_address_pools_ids[count.index]
+
+  depends_on              = [azurerm_network_interface.NIC]
 }

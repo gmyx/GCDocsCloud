@@ -23,11 +23,11 @@ resource "azurerm_storage_share" "coldshare" {
   }
 }
 
-resource "azurerm_management_lock" "coldStorageLock" {
+/*resource "azurerm_management_lock" "coldStorageLock" {
   name       = "coldShareLock"
   scope      = azurerm_storage_account.gcdocsinstallers.id
   lock_level = "CanNotDelete"
   notes      = "Contains all that is needed to build images"
-}
+}*/
 
 #if I could include the installers to upload, I would.
