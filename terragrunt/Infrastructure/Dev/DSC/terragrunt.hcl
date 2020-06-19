@@ -34,17 +34,17 @@ terraform {
     execute      = ["PowerShell", "source/generateHash.ps1"]
   }
 
-  before_hook "importStorage" {
+  before_hook "importDSC" {
     #gcdocsinstallers
     commands     = ["apply", "plan"]
     #send to import powershell to intelegently import
     execute = ["PowerShell", "tfImport/tfImport.ps1",
-      "-subscription_id", local.subscription_id,
-      "-client_id", local.client_id,
-      "-client_secret", local.client_secret,
-      "-tenant_id", local.tenant_id,
-      "-resource_group_name", local.resource_group_name,
-      "-automation_account_name", local.automation_account_name]
+      "-SubscriptionID", local.subscription_id,
+      "-clientID", local.client_id,
+      "-clientSecret", local.client_secret,
+      "-tenantID", local.tenant_id,
+      "-resourceGroupName", local.resource_group_name,
+      "-automationAccountName", local.automation_account_name]
   }
 }
 

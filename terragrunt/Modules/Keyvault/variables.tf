@@ -11,3 +11,7 @@ variable "resource_group_name" {
 variable "app_object_id" {
   description = "The objectID of the application, not the client id"
 }
+
+variable "keyvault_name" {
+  description = "The name of the keyvault"
+}

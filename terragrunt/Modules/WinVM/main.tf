@@ -29,10 +29,11 @@ resource "azurerm_network_interface_nat_rule_association" "NatRule" {
   depends_on = [module.WinVM]
 }
 
-/*data "azurerm_image" "packer-image" {
-  name                = "gcdocsGoldbuild"
+data "azurerm_shared_image" "packer-image" {
+  name                = "CS16.2.11"
+  gallery_name        = "GCdocsImages"
   resource_group_name = "GCDOCS-dev-rg"
-}*/
+}
 
 module "WinVM" {
   source = "./terraform-azurerm-basicwindowsvm-v2"
@@ -47,19 +48,17 @@ module "WinVM" {
   vm_size = var.size
   location = var.location
   load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids
-  data_disk_create_option = "FromImage"
-  data_disk_sizes_gb = [80,40]
-  ## hardcoding for testing only
-  //source_image_id = data.azurerm_image.packer-image.id
-  storage_image_reference = {
-    publisher = "GCDocs"
+  #data_disk_create_option = "FromImage"
+  #data_disk_sizes_gb = [80,40]
+  #data_disk_image_reference_ids = ["/subscriptions/98d18bb7-62b4-4fb6-b35b-9416f12eb2cc/resourceGroups/GCDOCS-DEV-RG/providers/Microsoft.Compute/disks/datadisk-1","/subscriptions/98d18bb7-62b4-4fb6-b35b-9416f12eb2cc/resourceGroups/GCDOCS-DEV-RG/providers/Microsoft.Compute/disks/datadisk-2"]
+
+  source_image_id = data.azurerm_shared_image.packer-image.id
+  /*storage_image_reference = {
+    publisher = "GCDocsImages"
     offer     = "GB16_2_11"
     sku       = "GB16_2_11"
     version   = "0.1.0"
-  }
-
-  //custom_data = filebase64("serverConfig/serverConfig.ps1")
-  #vm_depends_on = azurerm_network_interface_nat_rule_association.NatRule
+  }*/
 
   security_rules = [
     {

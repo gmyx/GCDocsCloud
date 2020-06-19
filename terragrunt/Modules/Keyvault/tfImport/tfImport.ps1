@@ -1,13 +1,14 @@
 #a proxy to mask import errors, if resource already imported
 param (
     [string]$SubscriptionID,
-    [string]$ResourceGroupName
+    [string]$ResourceGroupName,
+    [string]$KeyVaultName
 )
 
-#azurerm_resource_group.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/group1
+#terraform import azurerm_key_vault.example /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.KeyVault/vaults/vault1
 
 write-host "Importing Resrouce Group" -ForegroundColor Blue -BackgroundColor White
-$results1 = & terraform import "azurerm_resource_group.GCDOCS" "/subscriptions/$SubscriptionID/resourceGroups/$ResourceGroupName" 2>&1 | out-string
+$results1 = & terraform import "azurerm_key_vault.KeyVault" "/subscriptions/$SubscriptionID/resourceGroups/$ResourceGroupName/providers/Microsoft.KeyVault/vaults/$KeyVaultName" 2>&1 | out-string
 
 #prep exit ExitCode
 $ExitCode = 0

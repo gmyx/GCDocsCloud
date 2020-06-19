@@ -21,6 +21,12 @@ variable "data_disk_sizes_gb" {
   default     = []
 }
 
+variable "data_disk_image_reference_ids" {
+  type        = list
+  description = "The ids of the data disks to attach"
+  default     = []
+}
+
 variable "data_disk_create_option" {
   description = "The type of data disk to create"
   default     = "Empty"

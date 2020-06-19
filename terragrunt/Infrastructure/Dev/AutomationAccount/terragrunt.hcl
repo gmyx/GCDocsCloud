@@ -13,7 +13,7 @@ locals {
   subscription_id   = local.account_vars.locals.subscription_id
 
   #can't rely on dependency here, so load it from the env source file
-  rgn = local.environment_vars.locals.resource_group_name
+  resource_group_name = local.environment_vars.locals.resource_group_name
 }
 
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
@@ -28,7 +28,7 @@ terraform {
     #send to import powershell to intelegently import
     execute = ["PowerShell", "tfImport/tfImport.ps1",
       "-SubscriptionID", local.subscription_id,
-      "-ResourceGroupName", local.rgn,
+      "-ResourceGroupName", local.resource_group_name,
       "-AutomationAccountName", local.automation_account_name]
   }
 }

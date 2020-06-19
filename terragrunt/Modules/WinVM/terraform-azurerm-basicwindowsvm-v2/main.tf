@@ -84,23 +84,20 @@ resource azurerm_windows_virtual_machine VM {
   resource_group_name              = var.resource_group_name
   size                             = var.vm_size #renamed from vm_size
   network_interface_ids            = [azurerm_network_interface.NIC.id]
-  #primary_network_interface_id    = removed, now just the first NIC above
   availability_set_id              = var.availability_set_id
-  #delete_data_disks_on_termination = "true" #removed as there is no way to add data disks directly
-  #delete_os_disk_on_termination    = "true" #moved to provider settings - defaults to true
   license_type                     = var.license_type == null ? null : var.license_type
   computer_name                    = var.name #moved out of os_profile
   admin_username                   = var.admin_username #moved out of os_profile
   admin_password                   = var.admin_password #moved out of os_profile
   custom_data                      = var.custom_data #moved out of os_profile
   provision_vm_agent               = true #move out of os_profile_windows_config
-  //source_image_id                  = var.source_image_id
-  source_image_reference {
+  source_image_id                  = var.source_image_id
+  /*source_image_reference {
     publisher = var.storage_image_reference.publisher
     offer     = var.storage_image_reference.offer
     sku       = var.storage_image_reference.sku
     version   = var.storage_image_reference.version
-  }
+  }*/
   dynamic "plan" {
     for_each = local.plan
     content {
@@ -118,10 +115,6 @@ resource azurerm_windows_virtual_machine VM {
     storage_account_type = var.os_disk.storage_account_type #var should be renamed
     disk_size_gb      = var.os_disk.disk_size_gb
   }
-  /*storage_os_disk #did not find a replace settings for these {
-    create_option     = var.storage_os_disk.create_option #removed, possible braking change
-    os_type           = var.storage_os_disk.os_type #removed, redundent
-  }*/
 
   dynamic "boot_diagnostics" {
     for_each = local.boot_diagnostic
@@ -152,6 +145,7 @@ resource azurerm_managed_disk DataDisk {
   storage_account_type  = var.data_managed_disk_type
   disk_size_gb          = var.data_disk_sizes_gb[count.index]
   create_option         = var.data_disk_create_option
+  image_reference_id    = var.data_disk_image_reference_ids[count.index]
 }
 
 resource azurerm_virtual_machine_data_disk_attachment attached_data_disk {
