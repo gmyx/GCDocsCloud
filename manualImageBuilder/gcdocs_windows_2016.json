@@ -32,8 +32,6 @@
       "managed_image_name":                 "CS16.2.11",
       "build_resource_group_name":          "{{user `resource_group_name`}}",
 
-      "disk_additional_size":               [80,40],
-
       "os_type":                            "Windows",
       "image_publisher":                    "MicrosoftWindowsServer",
       "image_offer":                        "WindowsServer",
@@ -62,10 +60,6 @@
         "SASTOKEN={{user `sastoken`}}"
       ],
       "script": "stageAzcopy.ps1"
-    },
-    {
-      "type": "powershell",
-      "script": "initDisks.ps1"
     },
     {
       "type": "powershell",
@@ -105,6 +99,15 @@
     {
       "type": "powershell",
       "script": "..\\installers\\CS\\install.ps1"
+    },
+    {
+      "type": "windows-update",
+      "search_criteria": "IsInstalled=0",
+      "filters": [
+        "exclude:$_.Title -like '*Preview*'",
+        "include:$true"
+      ],
+      "update_limit": 25
     },
     {
       "type": "powershell",

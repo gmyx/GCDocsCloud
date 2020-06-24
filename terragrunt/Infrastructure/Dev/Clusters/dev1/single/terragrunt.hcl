@@ -66,7 +66,7 @@ inputs = {
   #variables needed to define the VM
   location            = local.location
   cluster_name        = local.cluster_name
-  resource_group_name = dependency.ResourceGroup.outputs.resource_group_name
+  resource_group      = dependency.ResourceGroup.outputs.resource_group_name
   environment         = local.environment
   keyvault_id         = dependency.Keyvault.outputs.keyvault_id
   admin_secret        = local.admin_secret

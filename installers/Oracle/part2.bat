@@ -1,1 +1,1 @@
-F:\installSource\Oracle\installer\client\setup.exe -responseFile F:\installSource\Oracle\FullClient.GCDOCS.rsp -force -waitforcompletion -ignoreSysPrereqs -noconsole -silent
+C:\installSource\Oracle\installer\client\setup.exe -responseFile C:\installSource\Oracle\FullClient.GCDOCS.rsp -force -waitforcompletion -ignoreSysPrereqs -noconsole -silent

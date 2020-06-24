@@ -1,3 +1,9 @@
+<#
+
+*************** DO NOT USE UNTIL TERRAFORM AZURE PROVIDER BUG FIXED ***************
+https://github.com/terraform-providers/terraform-provider-azurerm/issues/6004
+
+
 #since we know the size of the disks, we can pick and choose how to init
 #disk 1 == 80gb -> 80 000 000 000
 #disk 2 == 40gb -> 40 000 000 000
@@ -26,4 +32,4 @@ write-output "*** Done initializing disks ***"
 $Count = (Get-Disk | where PartitionStyle -eq 'raw' | Measure-Object).count
 if ($count -gt 0) {
     Exit 1 #error
-}
+} #>

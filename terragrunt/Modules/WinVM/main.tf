@@ -35,16 +35,22 @@ data "azurerm_shared_image" "packer-image" {
   resource_group_name = "GCDOCS-dev-rg"
 }
 
+data "azurerm_resource_group" "GCDOCS" {
+  name     = var.resource_group_name
+  location = var.location
+}
+
 module "WinVM" {
-  source = "./terraform-azurerm-basicwindowsvm-v2"
+  #source = "./terraform-azurerm-basicwindowsvm-v2"
+  source = "./terraform-azurerm_windows_virtual_machine"
 
   name = "${var.cluster_name}-${var.role}"
-  resource_group_name = var.resource_group_name
+  resource_group = data.azurerm_resource_group.GCDOCS #var.resource_group #_name
   admin_username = "opentext"
   admin_password = azurerm_key_vault_secret.VM-Secret.value
   nic_subnetName = var.subnet_name
   nic_vnetName  = var.vnet_name
-  nic_resource_group_name = var.resource_group_name
+  nic_resource_group_name = data.azurerm_resource_group.GCDOCS.name
   vm_size = var.size
   location = var.location
   load_balancer_backend_address_pools_ids = var.load_balancer_backend_address_pools_ids

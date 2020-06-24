@@ -48,5 +48,8 @@ packer build -force `
     .\gcdocs_windows_2016.json
 
 #remove generated disks
-Write-Output "Removing Data Disks"
-Get-AzDisk | where name -like "datadisk-?" | where 'ResourceGroupName' -eq $($EnvironmentInfo.locals.resource_group_name) | Remove-AzDisk -Force
+#no longer needed due to terraform azure provider bug - no extra disks created
+<#Write-Output "Removing Data Disks"
+Get-AzDisk | where name -like "datadisk-?" | where 'ResourceGroupName' -eq $($EnvironmentInfo.locals.resource_group_name) | Remove-AzDisk -Force#>
+
+

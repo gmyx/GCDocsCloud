@@ -1,7 +1,8 @@
 resource azurerm_network_security_group NSG {
+  count               = var.deploy ? 1 : 0
   name                = "${var.name}-nsg"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.resource_group.name
   dynamic "security_rule" {
     for_each = [for s in var.security_rules : {
       name                       = s.name
@@ -32,9 +33,9 @@ resource azurerm_network_security_group NSG {
 }
 
 resource "azurerm_storage_account" "boot_diagnostic" {
-  count                    = var.boot_diagnostic ? 1 : 0
+  count                    = var.boot_diagnostic && var.deploy ? 1 : 0 # This implement an AND condition for OR use
   name                     = local.storageName
-  resource_group_name      = var.resource_group_name
+  resource_group_name      = var.resource_group.name
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -42,19 +43,20 @@ resource "azurerm_storage_account" "boot_diagnostic" {
 
 # If public_ip is true then create resource. If not then do not create any
 resource azurerm_public_ip VM-EXT-PubIP {
-  count               = var.public_ip ? length(var.nic_ip_configuration.private_ip_address_allocation) : 0
+  count               = var.public_ip && var.deploy ? length(var.nic_ip_configuration.private_ip_address_allocation) : 0
   name                = "${var.name}-pip${count.index + 1}"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
   tags                = var.tags
 }
 
 resource azurerm_network_interface NIC {
+  count                         = var.deploy ? 1 : 0
   name                          = "${var.name}-nic1"
   location                      = var.location
-  resource_group_name           = var.resource_group_name
+  resource_group_name           = var.resource_group.name
   enable_ip_forwarding          = var.nic_enable_ip_forwarding
   enable_accelerated_networking = var.nic_enable_accelerated_networking
   dns_servers                   = var.dnsServers
@@ -73,25 +75,28 @@ resource azurerm_network_interface NIC {
 }
 
 resource azurerm_network_interface_security_group_association nic-nsg {
-  network_interface_id      = azurerm_network_interface.NIC.id
-  network_security_group_id = azurerm_network_security_group.NSG.id
+  count                     = var.deploy ? 1 : 0
+  network_interface_id      = azurerm_network_interface.NIC[0].id
+  network_security_group_id = azurerm_network_security_group.NSG[0].id
 }
 
 resource azurerm_windows_virtual_machine VM {
-  name                             = var.name
-  depends_on                       = [var.vm_depends_on]
-  location                         = var.location
-  resource_group_name              = var.resource_group_name
-  size                             = var.vm_size #renamed from vm_size
-  network_interface_ids            = [azurerm_network_interface.NIC.id]
-  availability_set_id              = var.availability_set_id
-  license_type                     = var.license_type == null ? null : var.license_type
-  computer_name                    = var.name #moved out of os_profile
-  admin_username                   = var.admin_username #moved out of os_profile
-  admin_password                   = var.admin_password #moved out of os_profile
-  custom_data                      = var.custom_data #moved out of os_profile
-  provision_vm_agent               = true #move out of os_profile_windows_config
-  source_image_id                  = var.source_image_id
+  count                 = var.deploy ? 1 : 0
+  name                  = var.name
+  depends_on            = [var.vm_depends_on]
+  location              = var.location
+  resource_group_name   = var.resource_group.name
+  admin_username        = var.admin_username
+  admin_password        = var.admin_password
+  computer_name         = var.name
+  custom_data           = var.custom_data
+  size                  = var.vm_size
+  priority              = var.priority
+  eviction_policy       = local.eviction_policy
+  network_interface_ids = [azurerm_network_interface.NIC[0].id]
+  availability_set_id   = var.availability_set_id
+  license_type          = var.license_type == null ? null : var.license_type
+  source_image_id       = var.source_image_id
   /*source_image_reference {
     publisher = var.storage_image_reference.publisher
     offer     = var.storage_image_reference.offer
@@ -106,20 +111,17 @@ resource azurerm_windows_virtual_machine VM {
       publisher = local.plan[0].publisher
     }
   }
-
-  #storage_os_disk is changed to os_disk but some options are different
-  #this resource is now always a managed disk
+  provision_vm_agent = true
   os_disk {
-    name              = "${var.name}-osdisk1"
-    caching           = var.os_disk.caching
-    storage_account_type = var.os_disk.storage_account_type #var should be renamed
-    disk_size_gb      = var.os_disk.disk_size_gb
+    name                 = "${var.name}-osdisk1"
+    caching              = var.storage_os_disk.caching
+    storage_account_type = var.os_managed_disk_type
+    disk_size_gb         = var.storage_os_disk.disk_size_gb
   }
 
   dynamic "boot_diagnostics" {
     for_each = local.boot_diagnostic
     content {
-      #enabled     = true #removed
       storage_account_uri = azurerm_storage_account.boot_diagnostic[0].primary_blob_endpoint
     }
   }
@@ -130,31 +132,35 @@ resource azurerm_windows_virtual_machine VM {
     }
   }
   tags = var.tags
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to username and password because it will require destroying and
+      # recreating the VM and all associated resources. It is better handled within the VM post deployment.
+      # This will prevent disastrous destruction in case someone plan a name and password change.
+      admin_username,
+      admin_password,
+    ]
+  }
 }
 
-# This is where the magic to dynamically create storage disk operate
-# *** completly changes with windows_virtual_machine:
-# *** is now in 2 seperate resources ***
+resource azurerm_managed_disk data_disks {
+  count = length(var.data_disk_sizes_gb) * ( var.deploy == true ? 1 : 0 )
 
-resource azurerm_managed_disk DataDisk {
-  count                 = length(var.data_disk_sizes_gb)
-
-  name                  = "${var.name}-datadisk${count.index}"
-  location              = var.location
-  resource_group_name   = var.resource_group_name
-  storage_account_type  = var.data_managed_disk_type
-  disk_size_gb          = var.data_disk_sizes_gb[count.index]
-  create_option         = var.data_disk_create_option
-  image_reference_id    = var.data_disk_image_reference_ids[count.index]
+  name                 = "${var.name}-datadisk${count.index + 1}"
+  location             = var.location
+  resource_group_name  = var.resource_group.name
+  storage_account_type = var.data_managed_disk_type
+  create_option        = "Empty"
+  disk_size_gb         = var.data_disk_sizes_gb[count.index]
 }
 
-resource azurerm_virtual_machine_data_disk_attachment attached_data_disk {
-  count               = length(var.data_disk_sizes_gb)
+resource azurerm_virtual_machine_data_disk_attachment data_disks {
+  count = length(var.data_disk_sizes_gb) * ( var.deploy == true ? 1 : 0 )
 
-  managed_disk_id     = azurerm_managed_disk.DataDisk[count.index].id
-  virtual_machine_id  = azurerm_windows_virtual_machine.VM.id
-  lun                 = count.index
-  caching             = "ReadWrite"
+  managed_disk_id    = azurerm_managed_disk.data_disks[count.index].id
+  virtual_machine_id = azurerm_windows_virtual_machine.VM[0].id
+  lun                = count.index
+  caching            = "ReadWrite"
 }
 
 #associate LB with primary nic

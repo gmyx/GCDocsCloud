@@ -1,1 +1,0 @@
-Start-Process -FilePath "c:\installsource\net48\ndp48-x86-x64-allos-enu.exe" -ArgumentList '/q /norestart' -Wait
